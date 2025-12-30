@@ -88,58 +88,60 @@ footer {
 }
 
 /* ========================================================
-   Z-INDEX LAYERING STRATEGY
-   ======================================================== */
-
-/**
- * Z-index hierarchy (from bottom to top):
- * - z-0: Base page content
- * - z-10: Sticky headers, footers
- * - z-20: Dropdowns, tooltips
- * - z-30: Floating contacts (WhatsApp/Telegram)
- * - z-60: Chatbot button & modal
- * - z-9998: Hamburger menu backdrop
- * - z-9999: Hamburger menu overlay & button (HIGHEST - above everything)
- * 
- * CRITICAL: Hamburger menu must be at z-9999 to ensure it appears
- * above the chatbot (z-60) and all other fixed elements.
- */
-
-/* ========================================================
-   HAMBURGER MENU FULL-SCREEN OVERLAY STYLES
+   Z-INDEX LAYERING STRATEGY - CRITICAL STACKING CONTEXTS
    ======================================================== 
    
-   Mobile & Tablet Navigation (<1024px)
+   ⚠️  DO NOT add position + z-index to any parent containers
+   that might contain the hamburger menu or other overlays.
    
-   Z-INDEX HIERARCHY (Lowest → Highest):
-   • Page Content         : z-0
+   CURRENT Z-INDEX HIERARCHY (Lowest → Highest):
+   ──────────────────────────────────────────────────────────
+   • Page Content         : z-0 (base layer)
    • Floating Icons       : z-30
    • Chatbot Widget       : z-60
-   • Menu Backdrop        : z-9998
-   • Menu Overlay         : z-9999
-   • Hamburger Button     : z-10000 (HIGHEST)
+   • Header               : z-30 (sticky, no conflict)
+   • Menu Backdrop        : z-999998
+   • Menu Overlay         : z-999999 (FULL-SCREEN)
+   • Hamburger Button     : z-1000000 (HIGHEST - always clickable)
    
-   KEY FEATURES:
-   • Full-screen overlay (100vw x 100vh)
-   • Slides from RIGHT edge (translateX)
-   • Menu items centered vertically & horizontally
-   • Smooth GPU-accelerated animations (60fps)
-   • Auto-closes on link/outside click/Escape
-   • Touch-friendly 60px targets (WCAG AAA)
+   🚨 CRITICAL: Hamburger menu MUST be rendered at BODY level
+   (not inside header/nav/container) to escape parent stacking contexts.
+   Rendered inside any positioned element = hidden behind that element.
+*/
+
+/* ========================================================
+   HAMBURGER MENU & FULL-SCREEN OVERLAY STYLES
+   ======================================================== 
+   
+   Architecture: Body-level component (no parent stacking context)
+   Position: fixed (viewport-attached)
+   Coverage: 100vw × 100vh (full viewport)
+   Z-Index: 999999 (above ALL page content)
+   Animation: Slide from RIGHT
+   
+   STACKING ORDER:
+   ✓ Hamburger button:  z-1000000  (CLICKABLE ABOVE OVERLAY)
+   ✓ Menu overlay:      z-999999   (FULL-SCREEN MENU)
+   ✓ Menu backdrop:     z-999998   (DARK OVERLAY)
+   ✗ Page content:      z-0        (HIDDEN)
+   ✗ Chatbot:           z-60       (HIDDEN)
+   ✗ Icons:             z-30       (HIDDEN)
 */
 
 /**
- * Hamburger Button - Fixed Top-Right
- * ─────────────────────────────────────────────────
- * z-index: 10000 (HIGHEST - always clickable)
+ * Hamburger Button - Fixed Top-Right (z-1000000)
+ * ──────────────────────────────────────────────────────────────
+ * Position: fixed (viewport-attached)
+ * Location: top-right corner
+ * z-index: 1000000 (ULTRA HIGH - clickable above overlay 999999)
  * Touch target: 44x44px minimum
- * Visible: Mobile & Tablet only
+ * Visible: Mobile & Tablet only (<1024px)
  */
 .hamburger-btn {
   position: fixed !important;
   top: 1rem;
   right: 1rem;
-  z-index: 10000 !important;
+  z-index: 1000000 !important; /* ULTRA HIGH - above overlay */
   min-width: 44px;
   min-height: 44px;
   -webkit-tap-highlight-color: transparent;
@@ -161,72 +163,69 @@ footer {
 }
 
 /**
- * Full-Screen Menu Overlay
- * ─────────────────────────────────────────────────
- * Size: 100vw x 100vh (entire viewport)
- * z-index: 9999 (above chatbot, icons, content)
- * Animation: Slide from right (400ms)
+ * Full-Screen Menu Overlay (z-999999)
+ * ──────────────────────────────────────────────────────────────
+ * CRITICAL: This is NOT the menu-overlay class, it's the nav element!
+ * 
+ * Position: fixed (viewport-attached, not document-attached)
+ * Size: 100vw × 100vh (full viewport)
+ * z-index: 999999 (HIGHEST - above ALL page content)
+ * Animation: Slide from RIGHT (translateX)
  * Initial: Off-screen right (translateX(100%))
+ * 
+ * NO PARENT STACKING CONTEXT: Rendered directly under <body>
+ * Component ID: menu-overlay-root
  */
-.menu-overlay {
+nav[id="menu-overlay-root"] {
   position: fixed !important;
-  inset: 0;
+  inset: 0 !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
   width: 100vw !important;
   height: 100vh !important;
   height: 100dvh !important;
-  z-index: 9999 !important;
-  transform: translateX(100%);
+  z-index: 999999 !important; /* HIGHEST - above ALL content */
+  transform: translateX(100%); /* Off-screen to right */
   transition: transform 400ms cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform;
-  overflow: hidden;
+  overflow: hidden !important;
   overscroll-behavior: none;
-}
-
-/**
- * Mobile menu container - force full screen
- */
-nav[id="mobile-menu-overlay"],
-nav[id="mobile-menu"] {
-  max-width: 100vw !important;
-  width: 100vw !important;
-  height: 100vh !important;
-  height: 100dvh !important;
   box-sizing: border-box;
 }
 
 /**
- * Menu Closed State
- * - Off-screen to right
- * - Disabled interaction
- * - Hidden from screen readers
- */
-nav[id="mobile-menu-overlay"][aria-hidden="true"],
-nav[id="mobile-menu"][aria-hidden="true"] {
-  transform: translateX(100%) !important;
-  pointer-events: none;
-  visibility: hidden;
-}
-
-/**
- * Menu Open State
- * - Translated to (0, 0)
- * - Enabled interaction
+ * Menu OPEN State (aria-hidden="false")
+ * - Translate to visible (0, 0)
+ * - Enable interaction
  * - Visible to screen readers
  */
-nav[id="mobile-menu-overlay"][aria-hidden="false"],
-nav[id="mobile-menu"][aria-hidden="false"] {
+nav[id="menu-overlay-root"][aria-hidden="false"] {
   transform: translateX(0) !important;
   visibility: visible;
   pointer-events: auto;
 }
 
 /**
- * Menu Link Items
- * ─────────────────────────────────────────────────
- * Min height: 60px (touch-friendly)
- * Centered: Flexbox (vertical + horizontal)
+ * Menu CLOSED State (aria-hidden="true")
+ * - Off-screen to right
+ * - Disable interaction
+ * - Hidden from screen readers
+ */
+nav[id="menu-overlay-root"][aria-hidden="true"] {
+  transform: translateX(100%) !important;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/**
+ * Menu Link Items - Large Touch Targets
+ * ──────────────────────────────────────────────────────────────
+ * Min height: 60px (exceeds WCAG AAA 44px requirement)
+ * Centered: Flexbox (align-items + justify-content)
  * Hover: Scale 1.05x + glow effect
- * Active: Scale 0.95x
+ * Active: Scale 0.95x (press-down feedback)
  */
 .menu-item {
   display: flex;

@@ -5,16 +5,27 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 /**
- * HamburgerMenu Component
+ * ═══════════════════════════════════════════════════════════════════════════════════
+ * HAMBURGER MENU - Full-Screen Mobile Overlay Navigation
+ * ═══════════════════════════════════════════════════════════════════════════════════
  * 
- * Mobile-first responsive navigation:
- * - Full-screen overlay on mobile/tablet (<1024px)
- * - Slide-in animation from right
- * - Auto-closes on route change, Escape key, or backdrop click
- * - z-index: 50 (menu panel), 45 (backdrop) - sits below chatbot (z-60)
- * - Prevents body scroll when open
- * - Touch-friendly targets (min 44x44px)
- * - Safe area support for iOS notch
+ * RENDERED AT BODY LEVEL to escape all parent stacking contexts.
+ * 
+ * ARCHITECTURE:
+ * ✓ position: fixed (viewport-attached, not document-attached)
+ * ✓ inset: 0 (top: 0, right: 0, bottom: 0, left: 0)
+ * ✓ width: 100vw, height: 100vh (full viewport coverage)
+ * ✓ z-index: 999999 (HIGHEST - above ALL page content)
+ * ✓ Slides from RIGHT (translateX(100%) → translateX(0))
+ * ✓ No parent stacking context (placed at <body> root)
+ * 
+ * Z-INDEX HIERARCHY:
+ * • Hamburger button:  z-1000000  ⭐ CLICKABLE ABOVE OVERLAY
+ * • Menu overlay:      z-999999   ✓ FULL-SCREEN MENU
+ * • Menu backdrop:     z-999998   ✓ DARK OVERLAY
+ * • Page content:      z-0        ✗ HIDDEN
+ * • Chatbot:           z-60       ✗ HIDDEN
+ * • Icons:             z-30       ✗ HIDDEN
  */
 export function HamburgerMenu() {
   const [isOpen, setIsOpen] = useState(false);
@@ -25,43 +36,54 @@ export function HamburgerMenu() {
     setIsOpen(false);
   }, [pathname]);
 
-  // Handle Escape key and prevent background scroll when menu is open
+  // Handle Escape key and lock/unlock body scroll
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") setIsOpen(false);
     };
     
     if (isOpen) {
-      // Lock body scroll to prevent background scrolling
+      // LOCK BODY SCROLL when overlay is open
       document.body.style.overflow = "hidden";
+      document.body.style.position = "fixed";
+      document.body.style.width = "100%";
+      document.documentElement.style.overflow = "hidden";
       document.addEventListener("keydown", handleEscape);
+    } else {
+      // UNLOCK BODY SCROLL when overlay closes
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.width = "";
+      document.documentElement.style.overflow = "";
     }
     
     return () => {
       document.removeEventListener("keydown", handleEscape);
-      // Restore body scroll
-      document.body.style.overflow = "unset";
     };
   }, [isOpen]);
 
   return (
     <>
       {/* 
-        ═══════════════════════════════════════════════════════════
-        HAMBURGER BUTTON - Fixed Top-Right Corner
-        ═══════════════════════════════════════════════════════════
-        - Visible only on mobile (<1024px) and tablet (<1280px)
-        - Fixed positioning in top-right corner
-        - z-index: 10000 (HIGHEST - ensures always clickable)
-        - Animated icon transformation (☰ → ✕)
-        - Touch-friendly 44x44px minimum target
+        ═══════════════════════════════════════════════════════════════════════
+        HAMBURGER BUTTON - Fixed Top-Right Corner (z-1000000)
+        ═══════════════════════════════════════════════════════════════════════
+        - Position: fixed (attached to viewport)
+        - Location: top-right corner
+        - z-index: 1000000 (ULTRA HIGH - clickable above overlay 999999)
+        - Visible only on mobile (<1024px)
+        - Animated icon transformation (☰ ↔ ✕)
+        - Touch target: 44x44px minimum (WCAG AAA)
+        
+        CRITICAL: z-index must be higher than overlay (999999) to ensure
+        users can always close the menu.
       */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="hamburger-btn fixed top-4 right-4 sm:top-5 sm:right-5 md:top-6 md:right-6 lg:hidden flex flex-col gap-1.5 w-12 h-12 items-center justify-center rounded-lg bg-background-alt/90 hover:bg-neutral-800/80 active:bg-neutral-800 transition-all duration-200 z-[10000] min-h-[44px] min-w-[44px] border border-neutral-700/60 shadow-xl backdrop-blur-sm"
+        className="hamburger-btn fixed top-4 right-4 sm:top-5 sm:right-5 md:top-6 md:right-6 lg:hidden flex flex-col gap-1.5 w-12 h-12 items-center justify-center rounded-lg bg-background-alt/90 hover:bg-neutral-800/80 active:bg-neutral-800 transition-all duration-200 z-[1000000] min-h-[44px] min-w-[44px] border border-neutral-700/60 shadow-xl backdrop-blur-sm"
         aria-label={isOpen ? "Close menu" : "Open menu"}
         aria-expanded={isOpen}
-        aria-controls="mobile-menu-overlay"
+        aria-controls="menu-overlay-root"
         type="button"
       >
         {/* Top bar - rotates to form X when open */}
@@ -88,21 +110,23 @@ export function HamburgerMenu() {
       </button>
 
       {/* 
-        ═══════════════════════════════════════════════════════════
-        FULL-SCREEN BACKDROP OVERLAY
-        ═══════════════════════════════════════════════════════════
-        - Covers entire viewport (100vw x 100vh)
-        - z-index: 9998 (below menu, above all other content)
-        - Click outside menu to close
-        - Dark overlay with strong blur effect
-        - Visible only on mobile/tablet (<1024px)
+        ═══════════════════════════════════════════════════════════════════════
+        DARK BACKDROP OVERLAY - Behind Menu Content
+        ═══════════════════════════════════════════════════════════════════════
+        - Position: fixed, inset: 0 (fills entire viewport)
+        - Size: 100vw × 100vh
+        - z-index: 999998 (just below menu overlay 999999)
+        - Dark overlay (black/85) with blur effect
+        - Click outside to close (outside click detection)
+        - Covers all page content (chatbot, icons, etc)
+        - Mobile/Tablet only (<1024px)
       */}
       {isOpen && (
         <div
-          className="fixed inset-0 w-screen h-screen bg-black/85 backdrop-blur-lg z-[9998] lg:hidden animate-fadeIn"
+          className="fixed inset-0 top-0 left-0 w-screen h-screen bg-black/85 backdrop-blur-lg z-[999998] lg:hidden"
           onClick={() => setIsOpen(false)}
           onKeyDown={(e) => {
-            if (e.key === "Escape" || e.key === "Enter" || e.key === " ") {
+            if (e.key === "Escape" || e.key === "Enter") {
               e.preventDefault();
               setIsOpen(false);
             }
@@ -114,20 +138,28 @@ export function HamburgerMenu() {
       )}
 
       {/* 
-        ═══════════════════════════════════════════════════════════
-        FULL-SCREEN MENU OVERLAY
-        ═══════════════════════════════════════════════════════════
-        - 100% viewport width and height coverage
-        - Slides in from RIGHT edge with smooth animation
-        - z-index: 9999 (HIGHEST content layer - above chatbot, icons, all content)
-        - Content centered both vertically and horizontally
-        - Smooth cubic-bezier transition (400ms)
-        - Prevents body scroll when open
-        - Mobile & Tablet only (<1024px)
+        ═══════════════════════════════════════════════════════════════════════
+        FULL-SCREEN MENU OVERLAY - True Overlay Above All Content
+        ═══════════════════════════════════════════════════════════════════════
+        CRITICAL REQUIREMENTS:
+        ✓ position: fixed (viewport-attached)
+        ✓ inset: 0 (top/right/bottom/left: 0)
+        ✓ width: 100vw, height: 100vh (full coverage)
+        ✓ z-index: 999999 (HIGHEST - above ALL content)
+        ✓ Slides from RIGHT (translateX(100%) → translateX(0))
+        ✓ No parent stacking context (body-level)
+        
+        STACKING:
+        • Hamburger button: z-1000000 (clickable above overlay)
+        • Menu overlay:     z-999999  (visible, highest)
+        • Dark backdrop:    z-999998  (supports menu)
+        • Page content:     z-0       (hidden)
+        • Chatbot:          z-60      (hidden)
+        • Icons:            z-30      (hidden)
       */}
       <nav
-        id="mobile-menu-overlay"
-        className={`menu-overlay fixed inset-0 w-screen h-screen bg-gradient-to-br from-background via-background to-background-alt z-[9999] lg:hidden transition-transform duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] overflow-hidden ${
+        id="menu-overlay-root"
+        className={`fixed inset-0 top-0 left-0 w-screen h-screen bg-gradient-to-br from-background via-background to-background-alt z-[999999] lg:hidden transition-transform duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] overflow-hidden ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
         aria-label="Mobile navigation menu"

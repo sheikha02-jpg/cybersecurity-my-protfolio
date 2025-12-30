@@ -84,6 +84,25 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className="dark">
       <body className="min-h-dvh bg-background text-neutral-100">
+        {/* 
+          FULL-SCREEN HAMBURGER MENU OVERLAY
+          ═══════════════════════════════════════════════════════════════════════
+          CRITICAL: Rendered at BODY level (not inside header/nav/div) to escape
+          all parent stacking contexts and be a TRUE full-screen overlay.
+          
+          Z-INDEX: 999999 (HIGHEST - above ALL page content)
+          POSITION: fixed (attached to viewport)
+          SIZE: 100vw × 100vh (covers entire viewport)
+          
+          This component MUST NOT be inside any element with:
+          ✗ position + z-index
+          ✗ transform
+          ✗ filter
+          ✗ opacity < 1
+          ✗ perspective
+        */}
+        <HamburgerMenu />
+        
         <div className="relative min-h-dvh cyber-grid">
           <header className="sticky top-0 z-30 border-b border-neutral-800 bg-background/95 backdrop-blur-md safe-area-top overflow-x-hidden">
             <div className="container mx-auto flex items-center justify-between py-3 sm:py-4 px-4 sm:px-6 max-w-full">
@@ -112,9 +131,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                   Contact
                 </Link>
               </nav>
-
-              {/* Mobile/Tablet Hamburger Menu */}
-              <HamburgerMenu />
             </div>
           </header>
           <main className="container pb-12 sm:pb-16 pt-6 sm:pt-8 overflow-x-hidden max-w-full">{children}</main>
