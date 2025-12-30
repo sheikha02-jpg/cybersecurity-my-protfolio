@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-background text-neutral-100 font-mono;
+}
+
+.cyber-grid {
+  background-image: radial-gradient(circle at top, rgba(255, 46, 46, 0.18), transparent 55%),
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: auto, 40px 40px, 40px 40px;
+}
+
+.glass-panel {
+  @apply bg-background-alt/80 border border-neutral-800/80 rounded-xl shadow-accent-glow;
+}
+
+
