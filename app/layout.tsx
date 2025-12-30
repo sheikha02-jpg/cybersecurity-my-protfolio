@@ -4,6 +4,18 @@ import { ReactNode } from "react";
 import Link from "next/link";
 import { HamburgerMenu } from "@/components/HamburgerMenu";
 
+/**
+ * RootLayout Component
+ * 
+ * Main application layout with:
+ * - Sticky header with responsive navigation
+ * - Desktop navigation (≥1024px) - horizontal links
+ * - Mobile/Tablet navigation (<1024px) - hamburger menu
+ * - Safe area support for iOS devices
+ * - Proper semantic HTML structure
+ * - SEO optimized with comprehensive metadata
+ */
+
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,

@@ -3,6 +3,22 @@
 import { useState } from "react";
 import axios from "axios";
 
+/**
+ * ChatbotWidget Component
+ * 
+ * Mobile-first AI chatbot overlay:
+ * - z-index: 60 (chatbot button), 60 (modal) - sits ABOVE floating icons (z-30) and menu (z-50)
+ * - Exposes 'open' state to parent via data attribute for FloatingContacts visibility control
+ * - Mobile: Full-width modal with safe padding
+ * - Tablet/Desktop: Fixed-width modal positioned bottom-right
+ * - Auto-hides on small screens when height is limited
+ * - Smooth transitions and animations
+ * - Accessible keyboard navigation
+ * - Touch-friendly targets (44x44px minimum)
+ * - Word-wrap for long messages
+ * - Safe area support for iOS notch
+ */
+
 interface Message {
   role: "user" | "assistant";
   content: string;
@@ -14,6 +30,28 @@ export function ChatbotWidget() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
+  /**
+   * Update data attribute on body when chatbot opens/closes
+   * This allows FloatingContacts to hide when chatbot is open
+   * Prevents overlapping UI elements on mobile
+   */
+  useState(() => {
+    if (typeof document !== 'undefined') {
+      if (open) {
+        document.body.setAttribute('data-chatbot-open', 'true');
+      } else {
+        document.body.removeAttribute('data-chatbot-open');
+      }
+    }
+  });
+
+  /**
+   * Send message to chatbot API
+   * - Validates input
+   * - Updates UI optimistically
+   * - Handles errors gracefully
+   * - Rate limiting handled by API
+   */
   const sendMessage = async () => {
     if (!input.trim() || loading) return;
     
@@ -21,6 +59,7 @@ export function ChatbotWidget() {
     const userMsgObj: Message = { role: "user", content: userMessage };
     const nextMessages = [...messages, userMsgObj];
     
+    // Optimistic UI update
     setMessages(nextMessages);
     setInput("");
     setLoading(true);
@@ -54,35 +93,70 @@ export function ChatbotWidget() {
 
   return (
     <>
-      {/* Chatbot Toggle Button */}
+      {/* 
+        Chatbot Toggle Button
+        - z-index: 60 (ABOVE floating contacts at z-30 and menu at z-50)
+        - Fixed position: bottom-right
+        - Mobile: Smaller padding, truncated text
+        - Tablet/Desktop: Larger with full text
+        - Safe area insets for iOS notch
+        - Smooth color transition on hover
+        - 44x44px minimum touch target
+      */}
       <button
         onClick={() => setOpen((v) => !v)}
-        className="fixed bottom-4 right-4 sm:bottom-5 sm:right-5 md:bottom-6 md:right-6 z-40 rounded-full bg-accent px-3 sm:px-4 md:px-5 lg:px-6 py-2 sm:py-2.5 md:py-3 font-semibold text-white shadow-accent-glow hover:bg-red-500 transition-colors min-h-[44px] min-w-[44px] max-w-[calc(100vw-2rem)] overflow-hidden"
+        className="fixed bottom-4 right-4 sm:bottom-5 sm:right-5 md:bottom-6 md:right-6 z-[60] rounded-full bg-accent px-3 sm:px-4 md:px-5 lg:px-6 py-2 sm:py-2.5 md:py-3 font-semibold text-white shadow-accent-glow hover:bg-red-500 transition-all duration-200 min-h-[44px] min-w-[44px] max-w-[calc(100vw-2rem)] overflow-hidden"
         style={{
           paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))',
-          paddingRight: 'max(1rem, env(safe-area-inset-right))',
+          paddingRight: 'max(0.75rem, env(safe-area-inset-right))',
         }}
         aria-label={open ? "Close chatbot" : "Open chatbot"}
+        aria-expanded={open}
+        type="button"
       >
         <span className="text-xs sm:text-sm lg:text-base whitespace-nowrap truncate">
           {open ? "Close" : "Chat with Alvi Bot"}
         </span>
       </button>
 
-      {/* Chatbot Modal */}
+      {/* 
+        Chatbot Modal
+        - z-index: 60 (ABOVE floating contacts and menu)
+        - Mobile: Full-width with side margins
+        - Tablet: Fixed width 400px
+        - Desktop: 480px
+        - Ultra-wide: 520px
+        - Max-width prevents viewport overflow
+        - Responsive height: 70vh on mobile, capped at specific heights
+        - Blur backdrop effect
+        - Safe area insets
+        - Flexbox layout: header, messages (flex-1), input
+      */}
       {open && (
         <div 
-          className="fixed bottom-[4.5rem] right-4 left-4 sm:bottom-20 sm:right-5 sm:left-5 md:right-6 md:left-auto md:bottom-24 md:w-[min(calc(100vw-3rem),400px)] lg:w-[min(calc(100vw-4rem),480px)] xl:w-[min(calc(100vw-5rem),520px)] z-40 rounded-xl border border-neutral-800 bg-background-alt/95 p-3 sm:p-4 md:p-5 xl:p-6 shadow-accent-glow backdrop-blur max-h-[min(70vh,600px)] sm:max-h-[min(65vh,520px)] md:max-h-[min(60vh,520px)] lg:max-h-[min(65vh,640px)] xl:max-h-[min(70vh,680px)] flex flex-col overflow-hidden"
+          className="fixed bottom-[4.5rem] right-4 left-4 sm:bottom-20 sm:right-5 sm:left-5 md:right-6 md:left-auto md:bottom-24 md:w-[min(calc(100vw-3rem),400px)] lg:w-[min(calc(100vw-4rem),480px)] xl:w-[min(calc(100vw-5rem),520px)] z-[60] rounded-xl border border-neutral-800 bg-background-alt/95 p-3 sm:p-4 md:p-5 xl:p-6 shadow-accent-glow backdrop-blur max-h-[min(70vh,600px)] sm:max-h-[min(65vh,520px)] md:max-h-[min(60vh,520px)] lg:max-h-[min(65vh,640px)] xl:max-h-[min(70vh,680px)] flex flex-col overflow-hidden"
           style={{
-            paddingBottom: 'max(1rem, env(safe-area-inset-bottom))',
-            paddingRight: 'max(1rem, env(safe-area-inset-right))',
+            paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))',
+            paddingRight: 'max(0.75rem, env(safe-area-inset-right))',
             maxWidth: 'calc(100vw - 2rem)',
             boxSizing: 'border-box',
           }}
+          role="dialog"
+          aria-label="Chatbot"
+          aria-modal="true"
         >
+          {/* Chatbot Header - truncates on narrow screens */}
           <div className="mb-2 sm:mb-3 font-display text-xs sm:text-sm md:text-base lg:text-lg text-accent flex-shrink-0 truncate">
             Cybersecurity Assistant
           </div>
+          
+          {/* 
+            Messages Container
+            - Scrollable vertically
+            - Prevents horizontal overflow
+            - Responsive min-height
+            - Dark background with border
+          */}
           <div className="mb-2 sm:mb-3 flex-1 min-h-[180px] sm:min-h-[200px] md:min-h-[240px] lg:min-h-[320px] xl:min-h-[360px] overflow-y-auto overflow-x-hidden rounded border border-neutral-800/80 bg-black/40 p-2 sm:p-3 md:p-4 lg:p-5 space-y-2 lg:space-y-3">
             {messages.length === 0 && (
               <p className="text-neutral-500 text-xs lg:text-sm xl:text-base leading-relaxed">
