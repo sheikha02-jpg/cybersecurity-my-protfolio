@@ -47,187 +47,193 @@ export function HamburgerMenu() {
   return (
     <>
       {/* 
-        Hamburger Button
-        - Visible only on mobile/tablet (<1024px)
-        - Animated icon transformation (hamburger ↔ X)
-        - z-index: 50 (above backdrop, below chatbot)
-        - Touch target: 44x44px minimum
+        ═══════════════════════════════════════════════════════════
+        HAMBURGER BUTTON - Fixed Top-Right Corner
+        ═══════════════════════════════════════════════════════════
+        - Visible only on mobile (<1024px) and tablet (<1280px)
+        - Fixed positioning in top-right corner
+        - z-index: 10000 (HIGHEST - ensures always clickable)
+        - Animated icon transformation (☰ → ✕)
+        - Touch-friendly 44x44px minimum target
       */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="lg:hidden flex flex-col gap-1.5 w-11 h-11 sm:w-12 sm:h-12 items-center justify-center rounded-md hover:bg-neutral-800/50 active:bg-neutral-800/70 transition-colors z-50 min-h-[44px] min-w-[44px] relative"
+        className="hamburger-btn fixed top-4 right-4 sm:top-5 sm:right-5 md:top-6 md:right-6 lg:hidden flex flex-col gap-1.5 w-12 h-12 items-center justify-center rounded-lg bg-background-alt/90 hover:bg-neutral-800/80 active:bg-neutral-800 transition-all duration-200 z-[10000] min-h-[44px] min-w-[44px] border border-neutral-700/60 shadow-xl backdrop-blur-sm"
         aria-label={isOpen ? "Close menu" : "Open menu"}
         aria-expanded={isOpen}
-        aria-controls="mobile-menu"
+        aria-controls="mobile-menu-overlay"
         type="button"
       >
-        {/* Top bar - rotates to form X */}
+        {/* Top bar - rotates to form X when open */}
         <span
-          className={`block h-0.5 w-6 sm:w-7 bg-neutral-200 transition-all duration-300 ease-in-out ${
+          className={`block h-0.5 w-7 bg-neutral-100 transition-all duration-300 ease-out ${
             isOpen ? "rotate-45 translate-y-2" : ""
           }`}
+          aria-hidden="true"
         />
-        {/* Middle bar - fades out */}
+        {/* Middle bar - fades out when open */}
         <span
-          className={`block h-0.5 w-6 sm:w-7 bg-neutral-200 transition-all duration-300 ease-in-out ${
-            isOpen ? "opacity-0" : ""
+          className={`block h-0.5 w-7 bg-neutral-100 transition-all duration-300 ease-out ${
+            isOpen ? "opacity-0 scale-0" : "opacity-100 scale-100"
           }`}
+          aria-hidden="true"
         />
-        {/* Bottom bar - rotates to form X */}
+        {/* Bottom bar - rotates to form X when open */}
         <span
-          className={`block h-0.5 w-6 sm:w-7 bg-neutral-200 transition-all duration-300 ease-in-out ${
+          className={`block h-0.5 w-7 bg-neutral-100 transition-all duration-300 ease-out ${
             isOpen ? "-rotate-45 -translate-y-2" : ""
           }`}
+          aria-hidden="true"
         />
       </button>
 
       {/* 
-        Backdrop Overlay
-        - Full-screen dark overlay behind menu panel
-        - z-index: 45 (above page content, below menu panel)
-        - Closes menu when clicked
-        - Blur effect for visual depth
-        - Only visible on mobile/tablet
+        ═══════════════════════════════════════════════════════════
+        FULL-SCREEN BACKDROP OVERLAY
+        ═══════════════════════════════════════════════════════════
+        - Covers entire viewport (100vw x 100vh)
+        - z-index: 9998 (below menu, above all other content)
+        - Click outside menu to close
+        - Dark overlay with strong blur effect
+        - Visible only on mobile/tablet (<1024px)
       */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[45] lg:hidden transition-opacity duration-300"
+          className="fixed inset-0 w-screen h-screen bg-black/85 backdrop-blur-lg z-[9998] lg:hidden animate-fadeIn"
           onClick={() => setIsOpen(false)}
-          onKeyDown={(e) => e.key === "Escape" && setIsOpen(false)}
+          onKeyDown={(e) => {
+            if (e.key === "Escape" || e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              setIsOpen(false);
+            }
+          }}
           role="button"
           tabIndex={0}
-          aria-label="Close menu"
+          aria-label="Close menu overlay"
         />
       )}
 
       {/* 
-        Slide-in Menu Panel
-        - Mobile (<640px): 85vw width (leaves small gap to see background)
-        - Tablet (≥640px, <1024px): Fixed 320px width
-        - Slides from right edge
-        - z-index: 50 (above backdrop, below chatbot)
-        - Smooth transform animation
-        - Prevents viewport overflow with max-width constraint
-        - Safe area support for iOS notch
+        ═══════════════════════════════════════════════════════════
+        FULL-SCREEN MENU OVERLAY
+        ═══════════════════════════════════════════════════════════
+        - 100% viewport width and height coverage
+        - Slides in from RIGHT edge with smooth animation
+        - z-index: 9999 (HIGHEST content layer - above chatbot, icons, all content)
+        - Content centered both vertically and horizontally
+        - Smooth cubic-bezier transition (400ms)
+        - Prevents body scroll when open
+        - Mobile & Tablet only (<1024px)
       */}
       <nav
-        id="mobile-menu"
-        className={`fixed top-0 right-0 h-full max-h-[100dvh] w-[85vw] sm:w-80 max-w-[min(85vw,320px)] bg-background-alt border-l border-neutral-800 z-50 lg:hidden transition-transform duration-300 ease-in-out shadow-2xl overflow-x-hidden overflow-y-auto ${
+        id="mobile-menu-overlay"
+        className={`menu-overlay fixed inset-0 w-screen h-screen bg-gradient-to-br from-background via-background to-background-alt z-[9999] lg:hidden transition-transform duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] overflow-hidden ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
-        aria-label="Mobile navigation"
+        aria-label="Mobile navigation menu"
         aria-hidden={!isOpen}
         role="navigation"
       >
-        <div className="flex flex-col h-full w-full overflow-hidden">
-          {/* 
-            Menu Header
-            - Logo and close button
-            - Sticky at top
-            - Border separator
-          */}
-          <div className="flex items-center justify-between p-4 border-b border-neutral-800 flex-shrink-0">
-            {/* Logo - truncates on very small screens */}
-            <div className="font-display text-base sm:text-lg text-accent truncate">
-              &lt;Alvi<span className="text-neutral-200">.redteam</span>&gt;
-            </div>
-            {/* Close button - 44x44px touch target */}
-            <button
-              onClick={() => setIsOpen(false)}
-              className="flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-md hover:bg-neutral-800/50 active:bg-neutral-800/70 transition-colors min-h-[44px] min-w-[44px]"
-              aria-label="Close menu"
-              type="button"
-            >
-              <span className="text-2xl sm:text-3xl text-neutral-400" aria-hidden="true">×</span>
-            </button>
+        {/* Main container - Flexbox for vertical & horizontal centering */}
+        <div className="flex flex-col items-center justify-center h-full w-full px-6 sm:px-8 md:px-12 py-8 relative overflow-hidden">
+          
+          {/* Close Button - Fixed in top-right corner of overlay */}
+          <button
+            onClick={() => setIsOpen(false)}
+            className="absolute top-5 right-5 sm:top-6 sm:right-6 md:top-8 md:right-8 flex items-center justify-center w-14 h-14 rounded-full bg-neutral-900/60 hover:bg-accent/80 active:bg-accent transition-all duration-200 min-h-[44px] min-w-[44px] z-20 border-2 border-neutral-700/40 hover:border-accent/60 shadow-2xl group"
+            aria-label="Close menu"
+            type="button"
+          >
+            <span className="text-4xl text-neutral-300 group-hover:text-white font-light leading-none" aria-hidden="true">×</span>
+          </button>
+
+          {/* Logo - Positioned at top center */}
+          <div className="absolute top-8 sm:top-10 md:top-12 left-1/2 -translate-x-1/2 font-display text-xl sm:text-2xl md:text-3xl text-accent text-center animate-slideDown">
+            &lt;Alvi<span className="text-neutral-200">.redteam</span>&gt;
           </div>
 
           {/* 
-            Menu Links
-            - Scrollable if content exceeds viewport
-            - Active state highlighting
-            - 44px minimum height per link
-            - Smooth hover transitions
+            ═══════════════════════════════════════════════════════════
+            MENU ITEMS - Centered Vertically & Horizontally
+            ═══════════════════════════════════════════════════════════
+            - Flexbox centers all items in viewport
+            - Large touch targets (60px minimum)
+            - Active page highlighted with accent color
+            - Smooth hover/active scale effects
+            - Auto-closes on any link click
           */}
-          <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6">
-            <div className="flex flex-col gap-3 sm:gap-4 w-full">
+          <div className="flex flex-col items-center justify-center gap-4 sm:gap-5 md:gap-6 w-full max-w-md animate-slideUp">
               <Link
                 href="/"
                 onClick={() => setIsOpen(false)}
-                className={`block px-4 py-3.5 rounded-lg text-base font-medium transition-colors min-h-[44px] flex items-center ${
+                className={`menu-item w-full text-center px-10 py-4 rounded-2xl text-lg sm:text-xl md:text-2xl font-bold transition-all duration-200 min-h-[60px] flex items-center justify-center group ${
                   pathname === "/"
-                    ? "bg-accent text-white"
-                    : "text-neutral-300 hover:bg-neutral-800/50 hover:text-accent active:bg-neutral-800/70"
+                    ? "bg-accent text-white shadow-[0_0_30px_rgba(255,46,46,0.5)] scale-105"
+                    : "text-neutral-200 bg-neutral-900/40 hover:bg-accent/20 hover:text-accent hover:scale-105 hover:shadow-[0_0_20px_rgba(255,46,46,0.3)] active:scale-95 border border-neutral-800/60 hover:border-accent/50"
                 }`}
               >
-                Home
+                <span className="group-hover:tracking-wider transition-all duration-200">Home</span>
               </Link>
               <Link
                 href="/skills"
                 onClick={() => setIsOpen(false)}
-                className={`block px-4 py-3.5 rounded-lg text-base font-medium transition-colors min-h-[44px] flex items-center ${
+                className={`menu-item w-full text-center px-10 py-4 rounded-2xl text-lg sm:text-xl md:text-2xl font-bold transition-all duration-200 min-h-[60px] flex items-center justify-center group ${
                   pathname === "/skills"
-                    ? "bg-accent text-white"
-                    : "text-neutral-300 hover:bg-neutral-800/50 hover:text-accent active:bg-neutral-800/70"
+                    ? "bg-accent text-white shadow-[0_0_30px_rgba(255,46,46,0.5)] scale-105"
+                    : "text-neutral-200 bg-neutral-900/40 hover:bg-accent/20 hover:text-accent hover:scale-105 hover:shadow-[0_0_20px_rgba(255,46,46,0.3)] active:scale-95 border border-neutral-800/60 hover:border-accent/50"
                 }`}
               >
-                Skills
+                <span className="group-hover:tracking-wider transition-all duration-200">Skills</span>
               </Link>
               <Link
                 href="/services"
                 onClick={() => setIsOpen(false)}
-                className={`block px-4 py-3.5 rounded-lg text-base font-medium transition-colors min-h-[44px] flex items-center ${
+                className={`menu-item w-full text-center px-10 py-4 rounded-2xl text-lg sm:text-xl md:text-2xl font-bold transition-all duration-200 min-h-[60px] flex items-center justify-center group ${
                   pathname === "/services"
-                    ? "bg-accent text-white"
-                    : "text-neutral-300 hover:bg-neutral-800/50 hover:text-accent active:bg-neutral-800/70"
+                    ? "bg-accent text-white shadow-[0_0_30px_rgba(255,46,46,0.5)] scale-105"
+                    : "text-neutral-200 bg-neutral-900/40 hover:bg-accent/20 hover:text-accent hover:scale-105 hover:shadow-[0_0_20px_rgba(255,46,46,0.3)] active:scale-95 border border-neutral-800/60 hover:border-accent/50"
                 }`}
               >
-                Services
+                <span className="group-hover:tracking-wider transition-all duration-200">Services</span>
               </Link>
               <Link
                 href="/projects"
                 onClick={() => setIsOpen(false)}
-                className={`block px-4 py-3.5 rounded-lg text-base font-medium transition-colors min-h-[44px] flex items-center ${
+                className={`menu-item w-full text-center px-10 py-4 rounded-2xl text-lg sm:text-xl md:text-2xl font-bold transition-all duration-200 min-h-[60px] flex items-center justify-center group ${
                   pathname === "/projects"
-                    ? "bg-accent text-white"
-                    : "text-neutral-300 hover:bg-neutral-800/50 hover:text-accent active:bg-neutral-800/70"
+                    ? "bg-accent text-white shadow-[0_0_30px_rgba(255,46,46,0.5)] scale-105"
+                    : "text-neutral-200 bg-neutral-900/40 hover:bg-accent/20 hover:text-accent hover:scale-105 hover:shadow-[0_0_20px_rgba(255,46,46,0.3)] active:scale-95 border border-neutral-800/60 hover:border-accent/50"
                 }`}
               >
-                Projects
+                <span className="group-hover:tracking-wider transition-all duration-200">Projects</span>
               </Link>
               <Link
                 href="/blog"
                 onClick={() => setIsOpen(false)}
-                className={`block px-4 py-3.5 rounded-lg text-base font-medium transition-colors min-h-[44px] flex items-center ${
+                className={`menu-item w-full text-center px-10 py-4 rounded-2xl text-lg sm:text-xl md:text-2xl font-bold transition-all duration-200 min-h-[60px] flex items-center justify-center group ${
                   pathname === "/blog"
-                    ? "bg-accent text-white"
-                    : "text-neutral-300 hover:bg-neutral-800/50 hover:text-accent active:bg-neutral-800/70"
+                    ? "bg-accent text-white shadow-[0_0_30px_rgba(255,46,46,0.5)] scale-105"
+                    : "text-neutral-200 bg-neutral-900/40 hover:bg-accent/20 hover:text-accent hover:scale-105 hover:shadow-[0_0_20px_rgba(255,46,46,0.3)] active:scale-95 border border-neutral-800/60 hover:border-accent/50"
                 }`}
               >
-                Blog
+                <span className="group-hover:tracking-wider transition-all duration-200">Blog</span>
               </Link>
               <Link
                 href="/contact"
                 onClick={() => setIsOpen(false)}
-                className={`block px-4 py-3.5 rounded-lg text-base font-medium transition-colors min-h-[44px] flex items-center ${
+                className={`menu-item w-full text-center px-10 py-4 rounded-2xl text-lg sm:text-xl md:text-2xl font-bold transition-all duration-200 min-h-[60px] flex items-center justify-center group ${
                   pathname === "/contact"
-                    ? "bg-accent text-white"
-                    : "text-neutral-300 hover:bg-neutral-800/50 hover:text-accent active:bg-neutral-800/70"
+                    ? "bg-accent text-white shadow-[0_0_30px_rgba(255,46,46,0.5)] scale-105"
+                    : "text-neutral-200 bg-neutral-900/40 hover:bg-accent/20 hover:text-accent hover:scale-105 hover:shadow-[0_0_20px_rgba(255,46,46,0.3)] active:scale-95 border border-neutral-800/60 hover:border-accent/50"
                 }`}
               >
-                Contact
+                <span className="group-hover:tracking-wider transition-all duration-200">Contact</span>
               </Link>
             </div>
-          </div>
 
-          {/* 
-            Menu Footer
-            - Copyright notice
-            - Sticky at bottom
-            - Border separator
-          */}
-          <div className="p-4 sm:p-6 border-t border-neutral-800 flex-shrink-0">
-            <p className="text-xs text-neutral-500 text-center">
+          {/* Footer - Fixed at bottom center */}
+          <div className="absolute bottom-6 sm:bottom-8 md:bottom-10 left-1/2 -translate-x-1/2 animate-slideUp">
+            <p className="text-xs sm:text-sm text-neutral-500 text-center whitespace-nowrap">
               © {new Date().getFullYear()} Sheikh Abdullah Alvi
             </p>
           </div>
