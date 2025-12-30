@@ -2,106 +2,275 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Alvi | Red Team Portfolio</title>
 
 <!-- GOOGLE FONTS -->
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
 
 <style>
-/* ================= GLOBAL ================= */
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-    background:#0b0b0b;
-    color:#eaeaea;
-    font-family:'JetBrains Mono', monospace;
+/* ================= GLOBAL BASELINE ================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-/* ================= UTIL ================= */
-.container{max-width:1200px;margin:auto;padding:80px 20px}
-h1,h2,h3{font-family:'Poppins',sans-serif;color:#ff2e2e}
-p{color:#ccc;line-height:1.7}
-.reveal{opacity:0;transform:translateY(40px);transition:0.8s}
-.reveal.active{opacity:1;transform:none}
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  width: 100%;
+  overflow-x: hidden;
+  background: #0b0b0b;
+  color: #eaeaea;
+  font-family: 'JetBrains Mono', monospace;
+  line-height: 1.6;
+}
+
+/* ================= TYPOGRAPHY ================= */
+h1, h2, h3 {
+  font-family: 'Poppins', sans-serif;
+  color: #ff2e2e;
+}
+
+h1 {
+  font-size: clamp(1.75rem, 5vw, 3.5rem);
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: clamp(1.25rem, 3vw, 2rem);
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+h3 {
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  font-weight: 600;
+}
+
+p {
+  color: #ccc;
+  font-size: clamp(0.875rem, 1.2vw, 1rem);
+  line-height: 1.7;
+}
+
+/* ================= UTILITIES ================= */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: 0.8s;
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: none;
+}
+
+.container {
+  max-width: 1440px;
+  margin: auto;
+  padding: clamp(2rem, 6vw, 4rem) clamp(1rem, 4vw, 2rem);
+}
 
 /* ================= HERO ================= */
-.hero{
-    height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    text-align:center;
-    background:radial-gradient(circle at top,#1a1a1a,#000);
-}
-.hero h1{font-size:52px}
-.hero span{color:#ff2e2e}
-.terminal{
-    background:#0f0f0f;
-    border:1px solid #ff2e2e;
-    padding:20px;
-    margin:30px auto;
-    max-width:650px;
-    text-align:left;
-    box-shadow:0 0 20px rgba(255,46,46,0.2)
-}
-.cursor{animation:blink 1s infinite}
-@keyframes blink{50%{opacity:0}}
-
-.cta{
-    margin-top:40px;
-}
-.cta a{
-    display:inline-block;
-    margin:10px;
-    padding:14px 28px;
-    border-radius:6px;
-    font-weight:600;
-    background:#ff2e2e;
-    color:#fff;
-    transition:0.3s;
-}
-.cta a:hover{box-shadow:0 0 20px #ff2e2e}
-
-/* ================= SKILLS ================= */
-.cards{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-    gap:25px;
-}
-.card{
-    background:#111;
-    border:1px solid #1f1f1f;
-    padding:25px;
-    border-radius:10px;
-    transition:0.3s;
-}
-.card:hover{
-    border-color:#ff2e2e;
-    box-shadow:0 0 25px rgba(255,46,46,0.2);
-    transform:translateY(-5px)
+.hero {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: radial-gradient(circle at top, #1a1a1a, #000);
+  padding: 2rem;
 }
 
-/* ================= COUNTERS ================= */
-.stats{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-    gap:20px;
-    text-align:center;
+.hero h1 {
+  margin-bottom: 1rem;
 }
-.stat{
-    background:#111;
-    padding:30px;
-    border-radius:10px;
+
+.hero span {
+  color: #ff2e2e;
 }
-.stat h3{font-size:38px}
+
+.terminal {
+  background: #0f0f0f;
+  border: 1px solid #ff2e2e;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  margin: clamp(1.5rem, 4vw, 2rem) auto;
+  max-width: min(650px, 90%);
+  text-align: left;
+  box-shadow: 0 0 20px rgba(255, 46, 46, 0.2);
+  border-radius: 8px;
+  font-size: clamp(0.75rem, 1vw, 0.875rem);
+  overflow-x: auto;
+}
+
+.cursor {
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ================= BUTTONS ================= */
+.cta {
+  margin-top: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.cta a {
+  display: inline-block;
+  padding: clamp(0.75rem, 1.5vw, 1rem) clamp(1.5rem, 3vw, 2rem);
+  border-radius: 6px;
+  font-weight: 600;
+  background: #ff2e2e;
+  color: #fff;
+  transition: 0.3s;
+  text-decoration: none;
+  font-size: clamp(0.75rem, 1vw, 0.875rem);
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+.cta a:hover {
+  box-shadow: 0 0 20px #ff2e2e;
+  background: #ff4444;
+}
+
+/* ================= CARDS & GRID ================= */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(clamp(250px, 100%, 300px), 1fr));
+  gap: clamp(1rem, 3vw, 2rem);
+  margin-top: 2rem;
+}
+
+.card {
+  background: #111;
+  border: 1px solid #1f1f1f;
+  padding: clamp(1.5rem, 3vw, 2rem);
+  border-radius: 10px;
+  transition: 0.3s;
+}
+
+.card:hover {
+  border-color: #ff2e2e;
+  box-shadow: 0 0 25px rgba(255, 46, 46, 0.2);
+  transform: translateY(-5px);
+}
+
+.card h3 {
+  margin-bottom: 1rem;
+}
+
+.card p {
+  margin: 0;
+}
+
+/* ================= STATS ================= */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(clamp(150px, 100%, 250px), 1fr));
+  gap: clamp(1rem, 3vw, 2rem);
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.stat {
+  background: #111;
+  padding: clamp(1.5rem, 3vw, 2rem);
+  border-radius: 10px;
+  border: 1px solid #1f1f1f;
+  transition: 0.3s;
+}
+
+.stat:hover {
+  border-color: #ff2e2e;
+  box-shadow: 0 0 15px rgba(255, 46, 46, 0.15);
+}
+
+.stat h3 {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  margin-bottom: 0.5rem;
+}
+
+.stat p {
+  font-size: clamp(0.75rem, 1vw, 0.875rem);
+  color: #666;
+  margin: 0;
+}
 
 /* ================= FOOTER ================= */
-footer{
-    text-align:center;
-    padding:30px;
-    color:#666;
-    border-top:1px solid #1a1a1a;
+footer {
+  text-align: center;
+  padding: clamp(1.5rem, 3vw, 2rem);
+  color: #666;
+  border-top: 1px solid #1a1a1a;
+  font-size: clamp(0.75rem, 1vw, 0.875rem);
+}
+
+/* ================= RESPONSIVE BREAKPOINTS ================= */
+@media (max-width: 374px) {
+  .hero {
+    padding: 1rem;
+  }
+  
+  h1 {
+    font-size: 1.5rem;
+  }
+  
+  .terminal {
+    padding: 0.75rem;
+  }
+}
+
+@media (min-width: 600px) {
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .cards {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  .stats {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  .cta a:hover {
+    transform: scale(1.05);
+  }
+}
+
+@media (min-width: 1440px) {
+  .container {
+    max-width: 1600px;
+  }
+  
+  h1 {
+    font-size: clamp(3rem, 4vw, 4rem);
+  }
+  
+  p {
+    max-width: 70ch;
+    margin-inline: auto;
+  }
 }
 </style>
 </head>
@@ -115,9 +284,9 @@ footer{
     <p>Red Team | Penetration Tester | VAPT Specialist</p>
 
     <div class="terminal">
-        <p>> Initializing offensive security mindset...</p>
-        <p>> Targeting real-world vulnerabilities...</p>
-        <p>> Status: <span id="typing"></span><span class="cursor">_</span></p>
+        <p>&gt; Initializing offensive security mindset...</p>
+        <p>&gt; Targeting real-world vulnerabilities...</p>
+        <p>&gt; Status: <span id="typing"></span><span class="cursor">_</span></p>
     </div>
 
     <div class="cta">
@@ -193,15 +362,15 @@ function type(){
     if(i < text.length){
         document.getElementById("typing").innerHTML += text.charAt(i);
         i++;
-        setTimeout(type,80);
+        setTimeout(type, 80);
     }
 }
 type();
 
 // Scroll Reveal
 const reveals = document.querySelectorAll(".reveal");
-window.addEventListener("scroll",()=>{
-    reveals.forEach(r=>{
+window.addEventListener("scroll", () => {
+    reveals.forEach(r => {
         const top = r.getBoundingClientRect().top;
         if(top < window.innerHeight - 100){
             r.classList.add("active");
@@ -211,14 +380,14 @@ window.addEventListener("scroll",()=>{
 
 // Counters
 const counters = document.querySelectorAll(".counter");
-counters.forEach(counter=>{
-    const update=()=>{
-        const target=+counter.dataset.target;
-        const current=+counter.innerText;
-        const inc=target/80;
+counters.forEach(counter => {
+    const update = () => {
+        const target = +counter.dataset.target;
+        const current = +counter.innerText;
+        const inc = target / 80;
         if(current < target){
             counter.innerText = Math.ceil(current + inc);
-            setTimeout(update,30);
+            setTimeout(update, 30);
         } else {
             counter.innerText = target;
         }

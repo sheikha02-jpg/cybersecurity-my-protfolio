@@ -1,0 +1,9 @@
+{
+  "topics": [
+    "Penetration testing tips",
+    "Red team methodologies",
+    "Security tool usage",
+    "Performance and system design for secure apps"
+  ],
+  "note": "Blog answers should summarize these topics only."
+}

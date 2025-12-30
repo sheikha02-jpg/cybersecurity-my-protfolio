@@ -1,7 +1,15 @@
 import "./globals.css";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { ReactNode } from "react";
 import Link from "next/link";
+import { HamburgerMenu } from "@/components/HamburgerMenu";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  colorScheme: "dark",
+};
 
 export const metadata: Metadata = {
   title: {
@@ -63,37 +71,42 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className="dark">
-      <body className="min-h-screen bg-background text-neutral-100">
-        <div className="relative min-h-screen cyber-grid">
-          <header className="sticky top-0 z-30 border-b border-neutral-800 bg-background/80 backdrop-blur">
-            <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-              <div className="font-display text-lg tracking-tight text-accent">
+      <body className="min-h-dvh bg-background text-neutral-100">
+        <div className="relative min-h-dvh cyber-grid">
+          <header className="sticky top-0 z-30 border-b border-neutral-800 bg-background/95 backdrop-blur-md safe-area-top overflow-x-hidden">
+            <div className="container mx-auto flex items-center justify-between py-3 sm:py-4 px-4 sm:px-6 max-w-full">
+              <Link href="/" className="font-display text-base sm:text-lg md:text-xl tracking-tight text-accent whitespace-nowrap flex-shrink-0">
                 &lt;Alvi<span className="text-neutral-200">.redteam</span>&gt;
-              </div>
-              <nav className="flex gap-6 text-sm text-neutral-300" aria-label="Main navigation">
-                <Link href="/" className="hover:text-accent">
+              </Link>
+              
+              {/* Desktop Navigation (1024px+) */}
+              <nav className="hidden lg:flex gap-4 xl:gap-6 text-sm text-neutral-300 overflow-x-hidden" aria-label="Main navigation">
+                <Link href="/" className="hover:text-accent transition-colors whitespace-nowrap">
                   Home
                 </Link>
-                <Link href="/skills" className="hover:text-accent">
+                <Link href="/skills" className="hover:text-accent transition-colors whitespace-nowrap">
                   Skills
                 </Link>
-                <Link href="/services" className="hover:text-accent">
+                <Link href="/services" className="hover:text-accent transition-colors whitespace-nowrap">
                   Services
                 </Link>
-                <Link href="/projects" className="hover:text-accent">
+                <Link href="/projects" className="hover:text-accent transition-colors whitespace-nowrap">
                   Projects
                 </Link>
-                <Link href="/blog" className="hover:text-accent">
+                <Link href="/blog" className="hover:text-accent transition-colors whitespace-nowrap">
                   Blog
                 </Link>
-                <Link href="/contact" className="hover:text-accent">
+                <Link href="/contact" className="hover:text-accent transition-colors whitespace-nowrap">
                   Contact
                 </Link>
               </nav>
+
+              {/* Mobile/Tablet Hamburger Menu */}
+              <HamburgerMenu />
             </div>
           </header>
-          <main className="mx-auto max-w-6xl px-4 pb-16 pt-8">{children}</main>
-          <footer className="border-t border-neutral-800 bg-background/80 py-6 text-center text-xs text-neutral-500">
+          <main className="container pb-12 sm:pb-16 pt-6 sm:pt-8 overflow-x-hidden max-w-full">{children}</main>
+          <footer className="border-t border-neutral-800 bg-background/80 py-4 sm:py-6 px-4 text-center text-xs text-neutral-500 safe-area-bottom overflow-x-hidden max-w-full">
             © {new Date().getFullYear()} Sheikh Abdullah Alvi — Offensive Security & Red Teaming
           </footer>
         </div>

@@ -1,0 +1,32 @@
+{
+  "services": [
+    {
+      "title": "Penetration Testing",
+      "description": "Comprehensive security assessment of web applications, APIs, networks, and infrastructure with manual exploitation focused on real-world attack scenarios."
+    },
+    {
+      "title": "Red Team Operations",
+      "description": "Full-spectrum adversary simulations to test detection, response, and control effectiveness across the kill chain."
+    },
+    {
+      "title": "Vulnerability Assessment & Penetration Testing (VAPT)",
+      "description": "Systematic identification, prioritization, and validation of vulnerabilities with actionable remediation guidance."
+    },
+    {
+      "title": "Security Audit",
+      "description": "Review of security configurations, architecture, and code with a focus on secure design and best practices."
+    },
+    {
+      "title": "Bug Bounty Assistance",
+      "description": "Guidance for hunters and programs: methodology, report quality, vulnerability validation, and exploitation approaches."
+    },
+    {
+      "title": "OSINT Investigations",
+      "description": "Open-source intelligence for attack surface discovery, threat profiling, and digital footprint analysis."
+    },
+    {
+      "title": "Security Consulting",
+      "description": "Strategic guidance for secure architecture, threat modeling, SDLC integration, and security training."
+    }
+  ]
+}

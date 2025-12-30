@@ -1,0 +1,30 @@
+{
+  "name": "Sheikh Abdullah Alvi",
+  "profession": "Penetration Tester & Red Team Operator",
+  "experience": "5+ years",
+  "platform": "Fiverr (Level 2 Seller)",
+  "summary": "Professional penetration tester and red team operator specializing in web application security, VAPT, API security, network security, OSINT, and bug hunting.",
+  "skills": [
+    "Web Application Penetration Testing",
+    "Vulnerability Assessment & Penetration Testing (VAPT)",
+    "Manual exploitation (OWASP Top 10)",
+    "API Security",
+    "Network Security Testing",
+    "OSINT & Reconnaissance",
+    "Bug Hunting",
+    "Red Team methodologies"
+  ],
+  "tech": [
+    "Kali Linux",
+    "Nmap",
+    "Burp Suite",
+    "Metasploit",
+    "SQLmap",
+    "ffuf",
+    "Gobuster",
+    "React.js",
+    "Next.js",
+    "Node.js",
+    "Django"
+  ]
+}

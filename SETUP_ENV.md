@@ -20,9 +20,6 @@ MONGODB_URI=mongodb://localhost:27017/alvi-portfolio
 # Option 2: MongoDB Atlas (cloud) - Replace with your connection string
 # MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/alvi-portfolio
 
-# OpenAI API Key for Chatbot (optional - site works without it)
-OPENAI_API_KEY=sk-your-openai-api-key-here
-
 # JWT Secret for Admin Authentication (change this!)
 JWT_SECRET=your-super-secret-jwt-key-change-this-in-production-12345
 
@@ -38,7 +35,6 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
   - **MongoDB Atlas**: Get your connection string from https://www.mongodb.com/cloud/atlas
 
 **Optional (but recommended):**
-- `OPENAI_API_KEY` - For the AI chatbot feature (get from https://platform.openai.com/)
 - `JWT_SECRET` - Change this to a random secret string
 - `NEXT_PUBLIC_SITE_URL` - Your site URL
 

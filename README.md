@@ -5,7 +5,7 @@ A production-ready Next.js portfolio website for Sheikh Abdullah Alvi, showcasin
 ## Features
 
 - 🎨 **Dark Red Hacker-Style UI** - Professional cyberpunk aesthetic
-- 🧠 **AI Chatbot** - OpenAI-powered assistant trained on Alvi's profile
+- 🧠 **Knowledge-Based Chatbot** - Deterministic answers from local `/knowledge` JSON/MD files only
 - 📝 **Dynamic Blog System** - Admin-controlled blog posts with ISR
 - 🛠️ **Project Showcase** - Dynamic project portfolio
 - 📧 **Contact Form** - Secure message storage
@@ -13,6 +13,7 @@ A production-ready Next.js portfolio website for Sheikh Abdullah Alvi, showcasin
 - 📱 **WhatsApp & Telegram** - Floating contact buttons
 - 🚀 **SEO Optimized** - Sitemap, robots.txt, metadata
 - ⚡ **Performance** - Server Components, ISR, lazy loading
+- 🛡️ **Anti-Hallucination** - Strict fallback when knowledge not found
 
 ## Tech Stack
 
@@ -20,7 +21,7 @@ A production-ready Next.js portfolio website for Sheikh Abdullah Alvi, showcasin
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
 - **Database**: MongoDB (Mongoose)
-- **AI**: OpenAI API
+- **AI**: Offline knowledge lookup (no external API required)
 - **Authentication**: JWT (admin only)
 
 ## Getting Started
@@ -29,7 +30,6 @@ A production-ready Next.js portfolio website for Sheikh Abdullah Alvi, showcasin
 
 - Node.js 18+ installed
 - MongoDB database (local or Atlas)
-- OpenAI API key
 
 ### Installation
 
@@ -49,18 +49,19 @@ cp .env.example .env.local
 
 Required variables:
 - `MONGODB_URI` - Your MongoDB connection string
-- `OPENAI_API_KEY` - Your OpenAI API key
 - `JWT_SECRET` - A secret key for admin authentication
 - `NEXT_PUBLIC_SITE_URL` - Your site URL (for SEO)
 
+**Note:** The chatbot uses only local knowledge files under `/knowledge` and requires no external AI keys.
+
 3. **Create admin user:**
 
-You'll need to create an admin user in MongoDB. You can do this by:
+Run the provided script:
+```bash
+node scripts/create-admin.js
+```
 
-- Using MongoDB Compass or CLI
-- Or creating a script to hash a password and insert into the `admins` collection
-
-Example (run in Node.js):
+Or manually using MongoDB Compass/CLI:
 ```javascript
 const bcrypt = require('bcryptjs');
 const password = await bcrypt.hash('your-password', 10);
@@ -69,7 +70,7 @@ const password = await bcrypt.hash('your-password', 10);
 
 4. **Update contact links:**
 
-Edit `components/FloatingContacts.tsx` and `app/contact/page.tsx` with your actual WhatsApp number and Telegram username.
+Edit `components/FloatingContacts.tsx` with your actual WhatsApp number and Telegram username.
 
 5. **Run development server:**
 
