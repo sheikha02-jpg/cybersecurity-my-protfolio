@@ -355,6 +355,7 @@ h3 {
  * - Comfortable reading size
  * - Word wrapping prevents horizontal scroll
  * - Increased line-height for readability
+ * - Max-width for ultra-wide screens (readability)
  */
 p {
   @apply text-neutral-300;
@@ -362,6 +363,128 @@ p {
   line-height: 1.7;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  max-width: 70ch; /* Optimal reading length */
+}
+
+/* ========================================================
+   MEDIA OPTIMIZATION (CRITICAL FOR PERFORMANCE)
+   ======================================================== */
+
+/**
+ * Global Image & Video Optimization
+ * ─────────────────────────────────────────────────────────
+ * SYSTEM ANALYST REQUIREMENT:
+ * - All images/videos must be responsive
+ * - No overflow from media elements
+ * - No stretched or distorted images
+ * - Lazy loading enabled by default
+ */
+
+img,
+video,
+picture,
+svg {
+  max-width: 100% !important;
+  height: auto !important;
+  display: block;
+  object-fit: cover;
+  border-radius: 0; /* Override any unwanted border radius */
+}
+
+/**
+ * Next.js Image Component Optimization
+ * Ensures Next.js <Image> components are responsive
+ */
+img[loading],
+img[decoding] {
+  max-width: 100% !important;
+  height: auto !important;
+  width: 100% !important;
+}
+
+/**
+ * Prevent image drag (UX improvement)
+ */
+img {
+  user-select: none;
+  -webkit-user-drag: none;
+  -moz-user-drag: none;
+}
+
+/**
+ * SVG optimization
+ */
+svg {
+  max-width: 100%;
+  height: auto;
+  vertical-align: middle;
+}
+
+/**
+ * Iframe optimization (for embedded content)
+ */
+iframe {
+  max-width: 100%;
+  border: 0;
+  display: block;
+}
+
+/* ========================================================
+   MAX-WIDTH WRAPPER SYSTEM (CRITICAL FOR LAYOUT)
+   ======================================================== 
+   
+   SYSTEM ANALYST REQUIREMENT:
+   - Prevent content from exceeding readable widths
+   - Responsive padding that scales with viewport
+   - Centered content on ultra-wide screens
+   - No horizontal scroll on any device
+*/
+
+/**
+ * Primary Content Wrapper
+ * ─────────────────────────────────────────────────────────
+ * Use this class for main content sections
+ * 
+ * Breakpoints:
+ * - Mobile: 100% width, 1rem padding
+ * - Tablet: 100% width, 2rem padding
+ * - Desktop: max 1440px, centered
+ * - Ultra-wide: max 1440px, extra padding
+ */
+.wrapper {
+  width: 100%;
+  max-width: 1440px; /* Prevents ultra-wide stretch */
+  margin-inline: auto; /* Center on large screens */
+  padding-inline: clamp(1rem, 4vw, 2.5rem);
+  box-sizing: border-box;
+}
+
+/**
+ * Narrow Content Wrapper (for text-heavy pages)
+ * ─────────────────────────────────────────────────────────
+ * Optimal for blog posts, articles, documentation
+ * Max-width: 800px for better readability
+ */
+.wrapper-narrow {
+  width: 100%;
+  max-width: 800px;
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 4vw, 2rem);
+  box-sizing: border-box;
+}
+
+/**
+ * Wide Content Wrapper (for dashboards, data tables)
+ * ─────────────────────────────────────────────────────────
+ * Allows more breathing room
+ * Max-width: 1600px
+ */
+.wrapper-wide {
+  width: 100%;
+  max-width: 1600px;
+  margin-inline: auto;
+  padding-inline: clamp(1.5rem, 5vw, 3rem);
+  box-sizing: border-box;
 }
 
 /* ========================================================
